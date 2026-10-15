@@ -254,6 +254,9 @@ export const POST: APIRoute = async ({ request, cookies, url, redirect }) => {
   const IN_APP_SHIPPING_RAILS = ['lightning', 'opennode', 'demo'];
   if (IN_APP_SHIPPING_RAILS.includes(selected) && shippingApplies) {
     const params = new URLSearchParams({ method: selected });
+    // The consent ticked on the cart travels with the redirect; without it the
+    // in-app step refuses an order the shopper has just agreed to.
+    if (isAcceptance(form.get('accept_terms'))) params.set('accept_terms', 'on');
     if (productPublicId) {
       params.set('product_id', productPublicId);
       const vid = parsePublicId(form.get('variant_id'), 'variant');
