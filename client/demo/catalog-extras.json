@@ -1,0 +1,124 @@
+{
+  "products": [
+    {
+      "sku": "SD-GUI",
+      "createdDaysAgo": 2,
+      "alts": [
+        "Guimauves à la framboise",
+        "Guimauves à la framboise, en gros plan"
+      ]
+    },
+    {
+      "sku": "SD-ABR",
+      "createdDaysAgo": 9,
+      "alts": [
+        "Pâtes de fruits à l’abricot",
+        "Pâtes de fruits à l’abricot, en gros plan"
+      ]
+    },
+    {
+      "sku": "SD-CAS",
+      "createdDaysAgo": 9,
+      "alts": [
+        "Pâtes de fruits au cassis",
+        "Pâtes de fruits au cassis, en gros plan"
+      ]
+    },
+    {
+      "sku": "SD-BER",
+      "createdDaysAgo": 20,
+      "alts": [
+        "Berlingots à la menthe",
+        "Berlingots à la menthe, en gros plan"
+      ]
+    },
+    {
+      "sku": "SD-CIT",
+      "createdDaysAgo": 5,
+      "alts": [
+        "Citrons givrés",
+        "Citrons givrés, en gros plan"
+      ]
+    },
+    {
+      "sku": "SD-SUC",
+      "createdDaysAgo": 1,
+      "alts": [
+        "Sucettes tourbillon",
+        "Sucettes tourbillon, en gros plan"
+      ]
+    },
+    {
+      "sku": "SD-CAR",
+      "createdDaysAgo": 14,
+      "alts": [
+        "Caramels au beurre salé",
+        "Caramels au beurre salé, en gros plan"
+      ]
+    },
+    {
+      "sku": "SD-VIO",
+      "createdDaysAgo": 30,
+      "alts": [
+        "Bonbons à la violette",
+        "Bonbons à la violette, en gros plan"
+      ]
+    },
+    {
+      "sku": "SD-REG",
+      "createdDaysAgo": 40,
+      "alts": [
+        "Rouleaux de réglisse",
+        "Rouleaux de réglisse, en gros plan"
+      ]
+    },
+    {
+      "sku": "SD-NOU",
+      "createdDaysAgo": 12,
+      "alts": [
+        "Nougat tendre miel et pistache",
+        "Nougat tendre miel et pistache, en gros plan"
+      ]
+    },
+    {
+      "sku": "SD-ARC",
+      "createdDaysAgo": 3,
+      "alts": [
+        "Acidulés arc-en-ciel",
+        "Acidulés arc-en-ciel, en gros plan"
+      ]
+    },
+    {
+      "sku": "SD-COF",
+      "createdDaysAgo": 6,
+      "alts": [
+        "Coffret découverte, 12 saveurs",
+        "Coffret découverte, 12 saveurs, en gros plan"
+      ]
+    },
+    {
+      "sku": "SD-AVE",
+      "createdDaysAgo": 0,
+      "alts": [
+        "Calendrier de l’Avent 2026",
+        "Calendrier de l’Avent 2026, en gros plan"
+      ]
+    },
+    {
+      "sku": "SD-BOC",
+      "createdDaysAgo": 18,
+      "alts": [
+        "Le grand bocal, 1 kg",
+        "Le grand bocal, 1 kg, en gros plan"
+      ]
+    },
+    {
+      "sku": "SD-BOI",
+      "createdDaysAgo": 25,
+      "alts": [
+        "Boîte métal à motifs",
+        "Boîte métal à motifs, en gros plan"
+      ]
+    }
+  ]
+}
