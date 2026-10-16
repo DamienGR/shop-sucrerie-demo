@@ -270,7 +270,7 @@ body {
   background: var(--pill, var(--color-brand));
   color: var(--color-ink);
   font-weight: 800;
-  transition: transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .sd-pill:nth-child(4n) {
   color: #fff;
@@ -426,9 +426,9 @@ body {
   background: var(--candy);
   rotate: var(--tilt, 0deg);
   transition:
-    border-radius 500ms cubic-bezier(0.34, 1.56, 0.64, 1),
-    rotate 500ms cubic-bezier(0.34, 1.56, 0.64, 1),
-    scale 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    border-radius 500ms cubic-bezier(0.22, 1, 0.36, 1),
+    rotate 500ms cubic-bezier(0.22, 1, 0.36, 1),
+    scale 500ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .sd-card a:hover .sd-card-photo {
   border-radius: 47% 53% 50% 50% / 50% 47% 53% 50%;
@@ -476,8 +476,8 @@ body {
   rotate: -8deg;
   filter: drop-shadow(0 0.6rem 0.6rem rgb(58 15 61 / 0.22));
   transition:
-    rotate 380ms cubic-bezier(0.34, 1.56, 0.64, 1),
-    translate 380ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    rotate 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    translate 380ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .sd-rayon:hover .sd-rayon-piece {
   rotate: 8deg;
@@ -573,7 +573,7 @@ body {
   color: #fff;
   font-size: 0.875rem;
   font-weight: 800;
-  transition: transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 @media (min-width: 640px) {
   .sd-cart {
@@ -618,7 +618,7 @@ body {
   margin-left: 0.25em;
 }
 .sd-logo-mark {
-  transition: rotate 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: rotate 600ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 a:hover > .sd-logo-mark {
   rotate: 200deg;
@@ -932,7 +932,7 @@ a:hover > .sd-logo-mark {
   border-radius: 2px;
   background: currentColor;
   translate: -50% -50%;
-  transition: rotate 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: rotate 300ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .sd-details-mark::after {
   rotate: 90deg;
