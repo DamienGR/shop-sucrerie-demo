@@ -197,7 +197,8 @@ const addr = {
 // features/legal/terms.ts. Open (no consent asked, none required) until the
 // merchant publishes the terms page.
 const terms = await readTermsGate(env.DB, cfg.legal);
-const termsAccepted = isAcceptance(fld('accept_terms'));
+// On the first GET the consent comes from the cart, through /api/checkout.
+const termsAccepted = isAcceptance(isPost ? fld('accept_terms') : Astro.url.searchParams.get('accept_terms'));
 
 let stage: 'address' | 'shipping' = 'address';
 let options: { label: string; amountCents: number; pickup?: boolean }[] = [];

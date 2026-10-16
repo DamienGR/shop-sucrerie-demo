@@ -7,80 +7,96 @@ import StoreAccountControl from '../../features/storefront/controls/StoreAccount
 import { t } from '../../features/i18n';
 
 /**
- * STORE-OWNED. Edit freely — this file belongs to your store.
+ * Sucrerie Démo : l'en-tête.
  *
- * It renders on EVERY page, including cart, checkout, payment, account, and
- * Admin login. A broken header is a broken checkout, so keep the core controls
- * below and change their placement and styling rather than their markup.
+ * Une pilule blanche qui flotte au-dessus de la page, collante, sur une barre
+ * transparente : la couleur de la page (le citron de l'accueil, la teinte du
+ * bonbon sur une fiche) passe tout autour. La marque à gauche, avec sa sucette,
+ * les rayons au milieu, la recherche et le panier à droite.
  *
- * See CUSTOMIZING.md for the full contract.
+ * Rendu sur TOUTES les pages, panier, commande, paiement et connexion admin
+ * comprises : les contrôles du cœur restent tels quels, seuls leur place et
+ * leur style changent.
+ *
+ * Sous `lg`, le menu marchand passe dans le <details> de <StoreNav>, dont le
+ * panneau s'ouvre sous la pilule (voir tokens.css).
  */
 interface Props {
   model: StorefrontShellModel;
 }
 
 const { model } = Astro.props;
+const control = 'rounded-full text-[0.9375rem] font-bold text-ink transition-colors hover:text-[var(--sd-hover)]';
 ---
 
-{/* Announcement bar. Deliberately NOT fixed: the header below is sticky, so a
-    fixed bar would need the header offset by the bar's height — which varies
-    as the message wraps on narrow screens. Static means it's seen on load,
-    scrolls away, and costs no vertical space on mobile. */}
 {
   model.announcement && (
-    <div class="bg-brand text-on-brand">
-      <div class="mx-auto max-w-6xl px-6 py-2 text-center text-xs tracking-wide">
+    <div class="sd-announce">
+      <p class="mx-auto max-w-[var(--page-max)] px-[var(--page-pad-x)] py-2.5 text-center text-[0.875rem] font-bold">
         {model.announcement.href ? (
-          <a href={model.announcement.href} class="underline-offset-2 hover:underline">
+          <a href={model.announcement.href} class="underline-offset-4 hover:underline">
             {model.announcement.text}
           </a>
         ) : (
           model.announcement.text
         )}
-      </div>
+      </p>
     </div>
   )
 }
 
-<header class="sticky top-0 z-20 border-b border-line bg-paper/85 backdrop-blur">
-  <div class="mx-auto flex max-w-6xl items-center gap-6 px-6 py-5">
-    {/* `min-w-0 truncate` is what lets the row survive 320 CSS px — a small
-        phone, or 400 % browser zoom on a desktop (WCAG 1.4.10). A flex item
-        defaults to min-width:auto, so without it the wordmark refuses to
-        shrink and pushes the cart 37px off the right edge, where a shopper
-        cannot reach it and a horizontal scrollbar appears on every page. */}
-    <a href="/" aria-label={model.storeName} class="min-w-0 truncate font-serif text-2xl tracking-tight">
+<header class="sd-header sticky top-0 z-30">
+  <div class="mx-auto max-w-[var(--page-max)] px-[calc(var(--page-pad-x)-0.25rem)] pt-3">
+    <div class="sd-header-pill relative flex h-16 items-center gap-2 pl-3 pr-2 sm:gap-5 sm:pl-5 sm:pr-4 lg:h-[4.5rem]">
+      <a href="/" aria-label={model.storeName} class="flex shrink-0 items-center gap-2 rounded-full sm:gap-2.5">
+        {
+          model.logo ? (
+            <img src={model.logo.src} alt={model.logo.alt} class="h-9 max-w-48 object-contain" />
+          ) : (
+            <>
+              <svg class="sd-logo-mark h-8 w-8 shrink-0 sm:h-10 sm:w-10" viewBox="0 0 40 40" aria-hidden="true">
+                <circle cx="20" cy="20" r="19" fill="#ff3d7f" />
+                <path d="M20 20.5c0-1.6 1.6-2.4 2.9-1.5 2 1.4 1.3 4.8-1.1 5.7-3.4 1.3-6.8-1.6-6.3-5.1.6-4.6 6-6.8 9.7-4.3 4.6 3.1 4 10.1-.9 12.6-5.6 2.9-12.6-.5-13.6-6.6" fill="none" stroke="#ffd23f" stroke-width="3" stroke-linecap="round" />
+              </svg>
+              <span class="sd-wordmark whitespace-nowrap text-[1.1rem] min-[400px]:text-[1.3rem] sm:text-[1.6rem]">{model.storeName}</span>
+            </>
+          )
+        }
+      </a>
+
       {
-        model.logo ? (
-          /* Not lazy: the header logo is above the fold on every page. The
-             store name stays the alt text, so the header still reads the
-             same to a screen reader or when the image fails. */
-          <img src={model.logo.src} alt={model.logo.alt} class="h-8 max-w-48 object-contain sm:h-10" />
-        ) : (
-          <span>{model.storeName}</span>
+        model.headerLinks.length > 0 && (
+          <nav aria-label={t('shell.nav.primary')} class="flex min-w-0 items-center max-lg:order-last lg:flex-1 lg:justify-center">
+            <StoreNav
+              links={model.headerLinks}
+              class={`hidden min-w-0 items-center gap-1 lg:flex ${control}`}
+              disclosureClass="static text-ink lg:hidden"
+            />
+          </nav>
         )
       }
-    </a>
-    <StoreSearch
-      action={model.search.action}
-      query={model.search.query}
-      class="ml-auto hidden flex-1 justify-end sm:flex"
-    />
-    {/* ml-auto pins the whole nav to the right edge of the header row, so it
-        stays flush right no matter how few items a merchant has.
-        min-w-0 is what lets long labels ellipsize instead of overflowing the
-        page: flex items default to min-width:auto, and without it here the
-        shrink stops at this level and the row grows past the viewport —
-        putting min-w-0 only on the links themselves is not enough. */}
-    <nav
-      aria-label={t('shell.nav.primary')}
-      class="ml-auto flex min-w-0 shrink-0 items-center gap-4 text-xs uppercase tracking-widest text-muted sm:gap-6"
-    >
-      <StoreNav links={model.headerLinks} />
-      {/* Search input is desktop-only; give mobile a link to the search page. */}
-      <a href={model.search.action} class="hover:text-brand sm:hidden">{t('shell.search.link')}</a>
-      {model.cart.enabled && <StoreCartControl href={model.cart.href} />}
-      {model.account.enabled && <StoreAccountControl href={model.account.href} />}
-    </nav>
+
+      <div class="ml-auto flex shrink-0 items-center gap-0.5 sm:gap-2 lg:ml-0">
+        <div class="sd-search hidden items-center gap-2 xl:flex">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" class="shrink-0">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" />
+          </svg>
+          <StoreSearch
+            action={model.search.action}
+            query={model.search.query}
+            inputClass="w-36 bg-transparent text-[0.9375rem] font-semibold text-ink placeholder:text-muted focus:outline-none"
+          />
+        </div>
+        <a href={model.search.action} aria-label={t('shell.search.link')} class="sd-icon-btn inline-flex xl:hidden">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" />
+          </svg>
+        </a>
+        {model.account.enabled && <StoreAccountControl href={model.account.href} class={`${control} hidden px-3 py-2 sm:inline-flex`} />}
+        {model.cart.enabled && <StoreCartControl href={model.cart.href} class="sd-cart inline-flex items-center whitespace-nowrap" />}
+      </div>
+    </div>
   </div>
 </header>

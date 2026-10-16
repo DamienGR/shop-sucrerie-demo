@@ -1,36 +1,88 @@
 ---
-import type { StorefrontShellModel } from '../../features/storefront/models';
+import type { StorefrontLink, StorefrontShellModel } from '../../features/storefront/models';
 import { t } from '../../features/i18n';
 
 /**
- * STORE-OWNED. Edit freely — this file belongs to your store.
+ * Sucrerie Démo : le pied de page.
  *
- * Footer links come from the merchant's navigation menu, already filtered to
- * targets that are actually publishable, so nothing here can render a dead
- * link. Like the header, this renders on every page.
+ * La dernière rayure du berlingot, en prune : une couture ondulée la sépare de
+ * la page, puis viennent les liens du menu marchand, rangés en colonnes, et la
+ * marque en très grand, chaque lettre dans une couleur de bonbon.
+ *
+ * Les liens viennent du menu « footer » de l'administration, déjà filtrés sur
+ * des cibles publiées. Ils sont seulement répartis en colonnes selon leur
+ * destination : la boutique, la maison, les pages légales.
  */
 interface Props {
   model: StorefrontShellModel;
 }
 
 const { model } = Astro.props;
+
+const isShop = (link: StorefrontLink) =>
+  link.href === '/' || link.href.startsWith('/products') || link.href.startsWith('/categories/');
+const isLegal = (link: StorefrontLink) =>
+  /^\/pages\/(conditions-generales|mentions-legales|politique-de-confidentialite|droit-de-retractation|cookies)/.test(link.href);
+
+const groups = [
+  { title: 'La boutique', links: model.footerLinks.filter(isShop) },
+  { title: 'La maison', links: model.footerLinks.filter((l) => !isShop(l) && !isLegal(l)) },
+  { title: 'Informations légales', links: model.footerLinks.filter(isLegal) },
+].filter((group) => group.links.length > 0);
+
+// La marque en grand, lettre par lettre : framboise, citron, menthe, violette.
+const letterColours = ['#ff3d7f', '#ffd23f', '#2fd69a', '#a88bff'];
+let colourIndex = 0;
+const letters = [...model.storeName].map((char) => {
+  if (char.trim() === '') return { char, colour: null };
+  const colour = letterColours[colourIndex % letterColours.length];
+  colourIndex += 1;
+  return { char, colour };
+});
+
+const year = new Date().getFullYear();
 ---
 
-<footer class="border-t border-line">
-  <div
-    class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-6 py-10 text-xs uppercase tracking-widest text-muted"
-  >
-    <span>&copy; {model.storeName}</span>
-    {
-      model.footerLinks.length > 0 && (
-        <nav aria-label={t('shell.nav.footer')} class="flex flex-wrap items-center gap-x-6 gap-y-3">
-          {model.footerLinks.map((link) => (
-            <a href={link.href} class="hover:text-brand">
-              {link.text}
-            </a>
-          ))}
-        </nav>
-      )
-    }
+<footer class="sd-footer" style="--band:#3a0f3d">
+  <div class="mx-auto max-w-[var(--page-max)] px-[var(--page-pad-x)] pt-16 sm:pt-20">
+    <div class="grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-4">
+        <p class="sd-title max-w-xs text-[1.75rem] text-white">Une confiserie artisanale à Lyon, depuis 2011.</p>
+        <p class="mt-5 max-w-xs text-[0.9375rem] leading-relaxed text-white/80">
+          La boutique de l’atelier est ouverte du mardi au samedi, de 10 h à 19 h. Nous répondons aux messages dans la journée.
+        </p>
+      </div>
+      {
+        groups.length > 0 && (
+          <nav aria-label={t('shell.nav.footer')} class="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:col-span-8">
+            {groups.map((group) => (
+              <div>
+                <p class="text-[0.9375rem] font-extrabold text-[#ffd23f]">{group.title}</p>
+                <ul class="mt-4 space-y-2.5">
+                  {group.links.map((link) => (
+                    <li>
+                      <a href={link.href} class="rounded text-[0.9375rem] font-semibold text-white/85 transition-colors hover:text-white">
+                        {link.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </nav>
+        )
+      }
+    </div>
+
+    <div class="sd-footer-mark-box mt-20">
+      <p aria-hidden="true" class="sd-footer-mark select-none whitespace-nowrap text-center">
+        {letters.map((letter) => (letter.colour ? <span style={`color:${letter.colour}`}>{letter.char}</span> : letter.char))}
+      </p>
+    </div>
+
+    <div class="flex flex-col gap-2 border-t-2 border-white/15 py-6 text-[0.8125rem] font-semibold text-white/75 sm:flex-row sm:items-center sm:justify-between">
+      <p>&copy; {year} {model.storeName}</p>
+      <p>Boutique de démonstration : aucune commande n’est débitée ni expédiée.</p>
+    </div>
   </div>
 </footer>

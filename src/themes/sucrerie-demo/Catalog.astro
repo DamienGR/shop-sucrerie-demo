@@ -1,65 +1,271 @@
 ---
-import type { CatalogPageModel } from '../../features/storefront/models';
+import type { CatalogPageModel, ProductCardModel } from '../../features/storefront/models';
 import ProductCard from './ProductCard.astro';
+import StoreImage from '../../features/storefront/controls/StoreImage.astro';
 import CatalogSort from '../../features/storefront/controls/CatalogSort.astro';
 import CatalogPagination from '../../features/storefront/controls/CatalogPagination.astro';
 import { t } from '../../features/i18n';
+import { candyFor, candyStyle } from './candy';
 
 /**
- * STORE-OWNED. Edit freely — this file belongs to your store.
+ * Sucrerie Démo : l'accueil et le catalogue.
  *
- * The catalog, rendered at both `/` and `/products`. It performs no queries and
- * parses no query parameters: every product, link, and URL on `model` is
- * already built and bounded.
+ * Le même modèle sert `/` et `/products`. Le chemin courant n'est pas une
+ * donnée du modèle, mais les liens de tri sont construits dessus : leur
+ * préfixe dit donc sur quelle route on est, sans lire la requête.
  *
- * Keep <CatalogSort> and <CatalogPagination>. Their hrefs encode the query
- * semantics the catalog's canonical URLs and caching depend on, and their
- * landmarks and rel hints are what make a paginated series legible to crawlers.
+ * Sur `/`, page 1 et tri par défaut, la page devient une vitrine en bandes de
+ * couleur, comme les rayures d'un berlingot : le citron de l'accueil, les
+ * nouveautés, le violet du calendrier de l'Avent, les rayons et toute la
+ * confiserie, puis le vert menthe de l'atelier. Partout ailleurs (`/products`,
+ * une autre page, un autre tri) c'est la liste complète, avec ses contrôles.
  *
- * See CUSTOMIZING.md for the full contract.
+ * <CatalogSort> et <CatalogPagination> gardent leurs liens : ce sont eux qui
+ * décident quelles URL existent, laquelle est canonique, et ce que le cache
+ * conserve.
  */
 interface Props {
   model: CatalogPageModel;
 }
 
 const { model } = Astro.props;
+
+const firstSort = model.sort.options[0];
+const base = firstSort ? firstSort.href.split('?')[0] : '/products';
+const defaultOrder = !firstSort || (firstSort.current && firstSort.direction === 'desc');
+const isShowcase = base === '/' && model.pagination.page === 1 && defaultOrder && model.products.length > 0;
+
+// Les rayons, dans l'ordre d'une confiserie plutôt que dans l'ordre alphabétique
+// du modèle. Chacun a sa couleur et son bonbon détouré ; un rayon ajouté plus
+// tard dans l'administration prend une couleur de la marque.
+const rayonLooks: Record<string, { piece: string; text: string }> = {
+  sachets: { piece: 'piece-guimauve', text: 'Au poids, en 150 ou 300 g' },
+  coffrets: { piece: 'piece-caramel', text: 'Les assortiments à offrir' },
+  cadeaux: { piece: 'piece-sucette', text: 'Le bocal, la boîte, à garder' },
+};
+const rayonOrder = Object.keys(rayonLooks);
+const rank = (slug: string) => (rayonOrder.includes(slug) ? rayonOrder.indexOf(slug) : rayonOrder.length);
+const rayons = model.categories
+  .map((category) => {
+    const slug = category.href.split('/').pop() ?? '';
+    return { ...category, slug, look: rayonLooks[slug] ?? null, candy: candyFor(slug) };
+  })
+  .sort((a, b) => rank(a.slug) - rank(b.slug));
+// Le violet est un cran plus sombre que la pastille du logo : il porte du
+// texte blanc (5,5:1).
+const rayonColours = ['#ff3d7f', '#ffd23f', '#2fd69a', '#6b47f5'];
+
+// Le calendrier de l'Avent a sa propre bande ; il quitte donc les listes.
+const isAvent = (card: ProductCardModel) => /calendrier-de-l.?avent/.test(card.href);
+const avent = model.products.find(isAvent) ?? null;
+const others = model.products.filter((card) => !isAvent(card));
+
+// Les noms de produits restent des h2 jusque dans la vitrine : c'est le repère
+// que la porte navigateur du socle sonde sur `/` (main ul li h2) pour relever
+// la signature du design.
+const nouveautes = others.slice(0, 4);
+const confiserie = others.slice(4);
+
+// Les bonbons qui tombent dans l'accueil. Décoratifs (le titre et le texte
+// disent tout), donc sans texte alternatif. Position, taille, inclinaison et
+// délai de chacun dans tokens.css ; le premier est l'image prioritaire.
+const pieces = [
+  { id: 'piece-guimauve', cls: 'sd-piece-a' },
+  { id: 'piece-sucette', cls: 'sd-piece-b' },
+  { id: 'piece-citron', cls: 'sd-piece-c' },
+  { id: 'piece-berlingot', cls: 'sd-piece-d' },
+  { id: 'piece-caramel', cls: 'sd-piece-e' },
+  { id: 'piece-violette', cls: 'sd-piece-f' },
+];
 ---
 
-<div class="mb-10">
-  <p class="text-xs uppercase tracking-[0.25em] text-muted">{model.eyebrow}</p>
-  <h1 class="mt-2 font-serif text-4xl tracking-tight sm:text-5xl">{model.heading}</h1>
-</div>
-
 {
-  model.categories.length > 0 && (
-    <div class="mb-12 flex flex-wrap gap-x-6 gap-y-2 text-xs uppercase tracking-widest text-muted">
-      {model.categories.map((category) => (
-        <a
-          href={category.href}
-          class="border-b border-transparent pb-0.5 hover:border-brand hover:text-brand"
-        >
-          {category.text}
-        </a>
-      ))}
-    </div>
+  isShowcase ? (
+    <>
+      {/* ── L'accueil, sur le citron ───────────────────────────────────── */}
+      <section class="sd-band sd-band-first sd-hero" style="--band:#ffd23f" aria-labelledby="sd-hero-title">
+        <div class="sd-wrap relative grid items-center gap-y-6 pb-20 pt-6 lg:grid-cols-12 lg:pb-28 lg:pt-10">
+          <div class="relative z-10 lg:col-span-7">
+            <h1 id="sd-hero-title" class="sd-display sd-inflate text-[clamp(3rem,11.6vw,5.5rem)] lg:text-[clamp(5rem,7.4vw,7.5rem)]">
+              <span class="block whitespace-nowrap">Des bonbons</span>
+              <span class="block whitespace-nowrap">cuits au</span>
+              <span class="block whitespace-nowrap">chaudron</span>
+            </h1>
+            <p class="mt-6 max-w-[34ch] text-[1.125rem] leading-relaxed sm:text-[1.25rem]">
+              Guimauves, berlingots, pâtes de fruits et caramels, faits à la main dans notre atelier de la Croix-Rousse, à
+              Lyon. De vrais fruits, et pas un seul colorant artificiel.
+            </p>
+            <div class="mt-9 flex flex-wrap gap-3">
+              <a href="/categories/sachets" class="sd-btn sd-btn-ink">Voir les sachets</a>
+              {avent && (
+                <a href={avent.href} class="sd-btn sd-btn-paper">
+                  Le calendrier de l’Avent
+                </a>
+              )}
+            </div>
+          </div>
+
+          <div class="sd-pieces lg:col-span-5">
+            <div class="sd-pieces-blob" />
+            {pieces.map((piece, i) => (
+              <img
+                src={`/brand/${piece.id}-480.webp`}
+                alt=""
+                width="480"
+                height="480"
+                loading={i === 0 ? 'eager' : 'lazy'}
+                fetchpriority={i === 0 ? 'high' : 'auto'}
+                decoding="async"
+                class={`sd-piece ${piece.cls}`}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Les nouveautés ──────────────────────────────────────────────── */}
+      <section class="sd-band" style="--band:var(--color-paper)" aria-labelledby="sd-nouveautes">
+        <div class="sd-wrap pb-16 pt-14 sm:pb-24 sm:pt-20">
+          <div class="mb-10 flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
+            <h2 id="sd-nouveautes" class="sd-title text-[clamp(2.25rem,5vw,4rem)]">Tout juste sortis du chaudron</h2>
+            <a href="/products" class="sd-link shrink-0 text-[1rem] font-bold">Toute la confiserie</a>
+          </div>
+          <ul class="sd-grid sd-grid-4">
+            {nouveautes.map((card, i) => (
+              <ProductCard card={card} index={i} />
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* ── Le calendrier de l'Avent, sur le violet ──────────────────────── */}
+      {avent && (
+        <section class="sd-band sd-on-dark" style="--band:#6b47f5" aria-labelledby="sd-avent">
+          <div class="sd-wrap grid items-center gap-10 py-16 sm:py-24 md:grid-cols-2 md:gap-16">
+            <a href={avent.href} class="sd-avent-photo block" style={candyStyle(candyFor(avent.href))} tabindex="-1" aria-hidden="true">
+              <StoreImage image={{ ...avent.image, priority: false }} class="aspect-square w-full object-cover" />
+            </a>
+            <div class="max-w-xl">
+              <h2 id="sd-avent" class="sd-title text-[clamp(2.25rem,5vw,4rem)]">Le calendrier de l’Avent 2026</h2>
+              <p class="mt-6 text-[1.125rem] leading-relaxed text-white">
+                Vingt-quatre petites boîtes à ouvrir du 1er au 24 décembre, chacune avec un bonbon de l’atelier, dont deux
+                recettes inédites réservées au calendrier. Expédié à partir du 2 novembre.
+              </p>
+              <div class="mt-9 flex flex-wrap items-center gap-5">
+                <a href={avent.href} class="sd-btn sd-btn-citron">Découvrir le calendrier</a>
+                <span class="sd-sticker bg-white text-ink">{avent.formattedPrice}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── Les rayons et toute la confiserie ───────────────────────────── */}
+      <section class="sd-band" style="--band:var(--color-paper)" aria-labelledby="sd-confiserie">
+        <div class="sd-wrap pb-20 pt-14 sm:pb-28 sm:pt-20">
+          {rayons.length > 0 && (
+            <nav aria-label={t('catalog.categories.label')}>
+              <ul class="grid gap-6 sm:grid-cols-3 sm:gap-8">
+                {rayons.map((rayon, i) => (
+                  <li>
+                    <a href={rayon.href} class="sd-rayon group" style={`--rayon:${rayonColours[i % rayonColours.length]}`}>
+                      {rayon.look && (
+                        <img src={`/brand/${rayon.look.piece}-480.webp`} alt="" width="480" height="480" loading="lazy" decoding="async" class="sd-rayon-piece" />
+                      )}
+                      <span class="block min-w-0">
+                        <span class="sd-title block text-[clamp(2rem,3.4vw,2.75rem)]">{rayon.text}</span>
+                        {rayon.look && <span class="mt-1 block text-[0.9375rem] font-semibold">{rayon.look.text}</span>}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+
+          {confiserie.length > 0 && (
+            <>
+              <h2 id="sd-confiserie" class="sd-title mb-10 mt-20 text-[clamp(2.25rem,5vw,4rem)] sm:mt-28">
+                Toute la confiserie
+              </h2>
+              <ul class="sd-grid sd-grid-4">
+                {confiserie.map((card, i) => (
+                  <ProductCard card={card} index={i + 4} />
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* ── L'atelier, sur la menthe ────────────────────────────────────── */}
+      <section class="sd-band sd-band-last" style="--band:#2fd69a" aria-labelledby="sd-atelier">
+        <div class="sd-wrap grid items-center gap-10 py-16 sm:py-24 md:grid-cols-12 md:gap-14">
+          <img
+            src="/brand/atelier-chaudron-640.webp"
+            srcset="/brand/atelier-chaudron-640.webp 640w, /brand/atelier-chaudron-1280.webp 1280w"
+            sizes="(min-width: 768px) 40vw, 100vw"
+            alt="Dans l’atelier, une confiseuse remue un sirop de framboise qui bouillonne dans un grand chaudron de cuivre."
+            width="1024"
+            height="1280"
+            loading="lazy"
+            decoding="async"
+            class="sd-drop aspect-[4/5] w-full object-cover md:col-span-5"
+          />
+          <div class="md:col-span-7 md:pl-4">
+            <h2 id="sd-atelier" class="sd-title text-[clamp(2.25rem,5vw,4rem)]">Tout est fait main, à la Croix-Rousse</h2>
+            <p class="mt-6 max-w-[56ch] text-[1.125rem] leading-relaxed">
+              Depuis 2011, nous cuisons nos bonbons par petites fournées dans des chaudrons de cuivre, avec des fruits de la
+              vallée du Rhône et des plantes plutôt que des colorants. Le sucre est étiré, coupé et emballé à la main, à
+              quelques mètres de la boutique.
+            </p>
+            <ul class="mt-8 flex flex-wrap gap-3" aria-label="Nos engagements">
+              <li class="sd-sticker bg-paper text-ink">De vrais fruits</li>
+              <li class="sd-sticker -rotate-2 bg-[#ffd23f] text-ink">Sans colorant artificiel</li>
+              <li class="sd-sticker rotate-1 bg-[#ff3d7f] text-ink">Cuit au chaudron de cuivre</li>
+            </ul>
+            <div class="mt-10 flex flex-wrap gap-3">
+              <a href="/pages/l-atelier" class="sd-btn sd-btn-ink">Visiter l’atelier</a>
+              <a href="/pages/ingredients-et-allergenes" class="sd-btn sd-btn-paper">Ingrédients et allergènes</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  ) : (
+    <>
+      <header class="pt-2">
+        <h1 class="sd-title text-[clamp(2.75rem,7vw,5.5rem)]">{model.heading}</h1>
+      </header>
+
+      <div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-5">
+        {model.categories.length > 0 && (
+          <nav aria-label={t('catalog.categories.label')} class="flex min-w-0 flex-wrap gap-2">
+            {model.categories.map((category, i) => (
+              <a href={category.href} class="sd-pill" style={`--pill:${rayonColours[i % rayonColours.length]}`}>
+                {category.text}
+              </a>
+            ))}
+          </nav>
+        )}
+        <CatalogSort model={model.sort} class="sd-sort ml-auto flex flex-wrap items-center gap-2 text-[0.9375rem] font-semibold" />
+      </div>
+
+      {model.products.length === 0 && (
+        <p role="status" class="py-24 text-center text-[1.25rem] font-semibold">
+          {t('catalog.empty.default')}
+        </p>
+      )}
+
+      {model.products.length > 0 && (
+        <ul class="sd-grid sd-grid-4 pt-12">
+          {model.products.map((card, i) => (
+            <ProductCard card={card} index={i} />
+          ))}
+        </ul>
+      )}
+
+      <CatalogPagination model={model.pagination} class="sd-pagination mt-20 flex items-center justify-center gap-3 text-[0.9375rem] font-bold" />
+    </>
   )
 }
-
-<CatalogSort model={model.sort} />
-
-{
-  /* role="status" is the contract, not the wording: an empty catalog must
-     announce itself to assistive technology rather than rendering a blank
-     grid. Reword it freely; keep the role and keep it non-empty. */
-  model.products.length === 0 && (
-    <p role="status" class="text-muted">
-      {t('catalog.empty.default')}
-    </p>
-  )
-}
-
-<ul class="grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-3">
-  {model.products.map((card, i) => <ProductCard card={card} index={i} />)}
-</ul>
-
-<CatalogPagination model={model.pagination} />
