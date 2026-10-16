@@ -2,51 +2,46 @@
 import type { ProductCardModel } from '../../features/storefront/models';
 import StoreImage from '../../features/storefront/controls/StoreImage.astro';
 import { t } from '../../features/i18n';
+import { candyFor, candyStyle, pebble } from './candy';
 
 /**
- * STORE-OWNED. Edit freely — this file belongs to your store, and upstream will
- * not rewrite it. It renders every product card on the storefront: catalog,
- * category, search, and recommendations.
+ * Sucrerie Démo : un bonbon, son nom, son prix.
  *
- * The contract, in full:
- *   - `card` is a ProductCardModel. Its URLs, price string, and availability
- *     are already resolved; do not recompute them.
- *   - Render the image through <StoreImage>. It owns responsive attributes and
- *     LCP behavior; copying its markup to change spacing loses both.
- *   - `card.inStock` is a boolean on purpose. Exact stock counts are private.
+ * La photographie est découpée en galet, sur la couleur du bonbon (celle du
+ * fond de la photo, voir candy.ts), si bien que l'image se fond dans sa forme.
+ * Chaque galet a ses arrondis et son inclinaison ; au survol il se redresse et
+ * s'arrondit, comme une pâte qu'on presse du doigt.
  *
- * See CUSTOMIZING.md for the full store-owned surface.
+ * Une seule ancre pour toute la carte, pour ne pas faire tabuler deux fois. Le
+ * prix arrive formaté, la disponibilité est un booléen : rien ne se recalcule
+ * ici.
  */
 interface Props {
   card: ProductCardModel;
-  /** Stagger index for the page-load reveal (capped at 8 steps). */
   index?: number;
-  /** Heading level for the card title, so cards nested under a section heading
-   *  keep the document outline correct. */
   headingLevel?: 'h2' | 'h3';
 }
 
 const { card, index = 0, headingLevel = 'h2' } = Astro.props;
 const Heading = headingLevel;
+const style = `${candyStyle(candyFor(card.href))};${pebble(index)}`;
 ---
 
-<li class="reveal group" style={`animation-delay:${Math.min(index, 8) * 60}ms`}>
-  <a href={card.href} class="block">
-    <div class="relative overflow-hidden rounded-md bg-surface">
-      <StoreImage
-        image={card.image}
-        fade
-        class={`aspect-square w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]${card.inStock ? '' : ' opacity-60'}`}
-      />
+<li class="sd-card group min-w-0" style={style}>
+  <a href={card.href} class="block rounded-[2rem]">
+    <div class="sd-card-photo">
+      <StoreImage image={card.image} fade class={`aspect-square w-full object-cover${card.inStock ? '' : ' opacity-55 grayscale-[0.4]'}`} />
       {
         !card.inStock && (
-          <span class="absolute left-3 top-3 rounded-full bg-surface/90 px-2.5 py-0.5 text-xs uppercase tracking-widest text-muted ring-1 ring-line">
+          <span class="sd-sticker absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-paper text-ink">
             {t('product.soldOut')}
           </span>
         )
       }
     </div>
-    <Heading class="mt-4 text-sm font-medium tracking-tight">{card.name}</Heading>
-    <p class="mt-1 text-sm tabular-nums text-muted">{card.formattedPrice}</p>
+    <div class="mt-4 flex flex-col items-start gap-2 px-1 sm:flex-row sm:justify-between sm:gap-3">
+      <Heading class="sd-card-name">{card.name}</Heading>
+      <span class="sd-card-price">{card.formattedPrice}</span>
+    </div>
   </a>
 </li>

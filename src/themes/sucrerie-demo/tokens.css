@@ -1,84 +1,1187 @@
 /*
- * ── Brand theming surface ────────────────────────────────────────────────
- * THIS is the file to edit when you rebrand a clone — colors, fonts, radii.
- * Upstream (the template) keeps structural CSS in global.css and doesn't touch
- * this file, so your theme never conflicts when you pull updates.
+ * ── Sucrerie Démo : framboise, citron, menthe, violette ──────────────────
  *
- * Tailwind v4 turns each --color-* into utilities (bg-brand, text-accent, …)
- * and uses --font-sans / --radius-* as global defaults. See README → Theming.
+ * Une confiserie artisanale lyonnaise. La page est une suite de bandes de
+ * couleur saturée, séparées par des coutures ondulées, comme les rayures d'un
+ * berlingot ; aucun angle droit, des galets et des pilules partout. Entre les
+ * bandes, un rose très pâle tient lieu de papier, et la prune sert d'encre.
+ *
+ * Chaque bonbon apporte en plus sa propre couleur (candy.ts) : son galet, sa
+ * pastille, et sur sa fiche le fond de la page entière, par les propriétés
+ * --candy, --candy-pale, --candy-deep et --candy-ink.
+ *
+ * Deux caractères libres (OFL), servis depuis la boutique : Gluten, rond et
+ * gonflé, pour les titres et la marque, dont l'axe de graisse fait « gonfler »
+ * le titre de l'accueil ; Nunito, rond lui aussi mais sage, pour le texte.
  */
+@font-face {
+  font-family: 'Gluten';
+  src: url('/fonts/gluten-latin-wght.woff2') format('woff2-variations'),
+    url('/fonts/gluten-latin-wght.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Nunito';
+  src: url('/fonts/nunito-latin-wght-normal.woff2') format('woff2-variations'),
+    url('/fonts/nunito-latin-wght-normal.woff2') format('woff2');
+  font-weight: 200 1000;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Nunito';
+  src: url('/fonts/nunito-latin-wght-italic.woff2') format('woff2-variations'),
+    url('/fonts/nunito-latin-wght-italic.woff2') format('woff2');
+  font-weight: 200 1000;
+  font-style: italic;
+  font-display: swap;
+}
+
 @theme {
-  /* Primary brand — solid buttons, primary actions, focus ring */
-  --color-brand: #111827;        /* swap for your brand color */
-  --color-brand-hover: #374151;  /* hover shade of the above */
-
-  /* Body text. Tokenized alongside --color-paper: a theme that changes the page
-     colour must be able to change the text colour with it, and a hardcoded
-     utility on <body> beats anything a theme declares in the base layer. */
-  --color-ink: #111827;
-
-  /* Accent — text links */
-  --color-accent: #2563eb;
-
-  /* Surfaces — warm paper background + hairline rules (editorial minimal) */
-  --color-paper: #faf8f4;
-  --color-line: #e7e2d9;
-
-  /* Raised panels: cards, form wells, the checkout summary. Distinct from
-     `paper` so a panel can sit *on* the page rather than dissolving into it. */
-  --color-surface: #ffffff;
-
-  /* Secondary and tertiary text. Two levels, not one — the storefront leans on
-     the distinction between a supporting line and an incidental one, and
-     collapsing them flattens every summary and product meta block.
-
-     Both clear 4.5:1 on `surface`. `faint` was gray-400 in a dozen places
-     before these became tokens, which is 2.6:1 on white — legible to us,
-     invisible to anyone else. */
-  --color-muted: #4b5563;
-  --color-faint: #6b7280;
-
-  /* Label colour on a `brand` fill. A token rather than a hardcoded white,
-     because a theme is free to pick a light brand — and then white fails
-     contrast on every primary button at once. */
+  /* La framboise cuite : le cœur s'en sert pour ses boutons ET pour du texte
+     (liens du panier, des pages), il lui faut donc 4,5:1 sur le papier (5,3:1)
+     comme sous un libellé blanc (5,9:1). La framboise vive, #ff3d7f, reste aux
+     bandes, aux galets et aux pastilles, où elle est posée en dur. */
+  --color-brand: #c2185b;
+  --color-brand-hover: #a3124b;
   --color-on-brand: #ffffff;
+  /* Prune : l'encre de toute la boutique. 15:1 sur le papier rose. */
+  --color-ink: #3a0f3d;
+  /* Liens de texte : la framboise assombrie, 5,3:1 sur le papier. */
+  --color-accent: #b0124f;
 
-  /* Typography — sans body + a characterful system serif for display (no webfont) */
-  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
-    Helvetica, Arial, sans-serif;
-  --font-serif: 'Hoefler Text', 'Iowan Old Style', 'Palatino Linotype', Palatino,
-    Georgia, 'Times New Roman', serif;
+  /* Le papier : un rose très pâle, entre les bandes et sur les pages simples. */
+  --color-paper: #fff0f5;
+  /* Les panneaux, les pilules, la pastille d'en-tête : du blanc. */
+  --color-surface: #ffffff;
+  --color-line: #f3c6d8;
 
-  /* Corner radius (Tailwind defaults, surfaced here for one-place editing) */
-  --radius-md: 0.375rem;
-  --radius-lg: 0.5rem;
+  /* 8:1 et 6:1 sur le blanc, 7,4:1 et 5,5:1 sur le papier. */
+  --color-muted: #6e3f69;
+  --color-faint: #85507f;
+
+  --font-sans: 'Nunito', ui-rounded, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+  /* Le cœur nomme « serif » le caractère de titre : ici, Gluten. */
+  --font-serif: 'Gluten', 'Nunito', ui-rounded, ui-sans-serif, system-ui, sans-serif;
+
+  /* Des arrondis francs : les champs et les boutons du cœur s'en arrondissent. */
+  --radius-md: 1rem;
+  --radius-lg: 1.75rem;
+}
+
+/* Conteneur. --header-h est la hauteur de la barre collante qui porte la
+   pilule d'en-tête : la première bande de l'accueil remonte dessous. */
+:root {
+  --page-max: 84rem;
+  --page-pad-x: clamp(1rem, 3.6vw, 3rem);
+  --page-pad-y: 2.5rem;
+  --header-h: 4.75rem;
+  --sd-hover: #b0124f;
+  --candy: #ff3d7f;
+  --candy-pale: #ffe0eb;
+  --candy-deep: #b82c67;
+  --candy-ink: #3a0f3d;
+}
+@media (min-width: 1024px) {
+  :root {
+    --header-h: 5.25rem;
+  }
+}
+
+/* Prose des pages de contenu. */
+:root {
+  --prose-measure: 44rem;
+  --prose-leading: 1.75;
+  --prose-h1-size: clamp(2.75rem, 6vw, 5rem);
+  --prose-h1-tracking: -0.015em;
+  --prose-h2-size: 2rem;
+  --prose-h2-tracking: -0.01em;
+  --prose-h3-size: 1.375rem;
 }
 
 /*
- * Content-page prose scale.
- *
- * Ordinary custom properties, intentionally OUTSIDE @theme: the core
- * `.markdown-content` rules consume them directly, and they define no Tailwind
- * utility namespace. Moving them into @theme would imply a utility-token role
- * they do not have.
- *
- * Every rule that reads one also carries today's value as its final fallback,
- * so deleting a line here — or replacing this whole file with a design system's
- * tokens — degrades to the current design rather than to browser defaults.
+ * Règles hors couche : elles passent après les utilitaires, ce qui est voulu
+ * pour les quelques ajustements des contrôles du cœur (galerie, choix du poids,
+ * boutons d'achat). Les sélecteurs s'appuient sur les attributs data-* que ces
+ * contrôles publient, jamais sur leurs classes.
  */
-/* Page container. The default is a centred editorial column. */
-:root {
-  --page-max: 72rem;
-  --page-pad-x: 1.5rem;
-  --page-pad-y: 3rem;
+/* Le tiroir du panier attend hors champ, à droite, et les bandes débordent du
+   conteneur : sans ce rognage, la page défilerait à l'horizontale. */
+html {
+  -webkit-text-size-adjust: 100%;
+  overflow-x: clip;
+}
+body {
+  font-size: 1rem;
+  line-height: 1.6;
+  font-weight: 500;
+  overflow-x: clip;
 }
 
-:root {
-  --prose-measure: 48rem;
-  --prose-leading: 1.75;
-  --prose-h1-size: 2.25rem;
-  --prose-h1-tracking: -0.02em;
-  --prose-h2-size: 1.5rem;
-  --prose-h2-tracking: -0.01em;
-  --prose-h3-size: 1.125rem;
+/* ── Typographie ──────────────────────────────────────────────────────── */
+.font-serif {
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.sd-display {
+  font-family: var(--font-serif);
+  font-weight: 880;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+}
+.sd-title {
+  font-family: var(--font-serif);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.sd-wordmark {
+  font-family: var(--font-serif);
+  font-weight: 850;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+}
+.sd-link {
+  text-decoration: underline;
+  text-decoration-color: var(--color-brand);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 0.3em;
+  transition: text-decoration-color 150ms ease;
+}
+.sd-link:hover {
+  text-decoration-color: currentColor;
+}
+
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 3px;
+}
+.sd-on-dark :where(a, button):focus-visible,
+.sd-footer :where(a, button):focus-visible {
+  outline-color: #ffd23f;
+}
+
+/* ── Bandes de couleur et coutures ondulées ────────────────────────────
+   Une bande sort du conteneur centré pour couvrir toute la largeur. Sa
+   couture (::before) est une onde découpée dans sa propre couleur, posée sur
+   le bord de la bande précédente. */
+.sd-band {
+  position: relative;
+  margin-inline: calc(50% - 50vw);
+  background: var(--band, var(--color-paper));
+  color: var(--color-ink);
+}
+.sd-band::before,
+.sd-footer::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 1px;
+  height: 1.5rem;
+  transform: translateY(-100%);
+  background: inherit;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cpath d='M0 14C15 14 15 2 30 2s15 12 30 12 15-12 30-12 15 12 30 12v10H0Z'/%3E%3C/svg%3E")
+    repeat-x left bottom / 7.5rem 100%;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cpath d='M0 14C15 14 15 2 30 2s15 12 30 12 15-12 30-12 15 12 30 12v10H0Z'/%3E%3C/svg%3E")
+    repeat-x left bottom / 7.5rem 100%;
+  pointer-events: none;
+}
+.sd-wrap {
+  margin-inline: auto;
+  max-width: var(--page-max);
+  padding-inline: var(--page-pad-x);
+}
+/* La première bande remonte sous l'en-tête, qui flotte dessus ; la dernière
+   rejoint le pied de page. */
+.sd-band-first {
+  margin-top: calc(-1 * (var(--page-pad-y) + var(--header-h)));
+  padding-top: var(--header-h);
+}
+.sd-band-first::before {
+  display: none;
+}
+.sd-band-last {
+  margin-bottom: calc(-1 * var(--page-pad-y));
+}
+.sd-on-dark {
+  color: #fff;
+}
+
+/* ── Boutons, pilules, pastilles ─────────────────────────────────────────
+   Pilules, et un ressort : au clic, le bouton s'écrase un instant, comme une
+   guimauve sous le doigt. */
+.sd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.25rem;
+  padding: 0 1.75rem;
+  border-radius: 999px;
+  font-size: 1.0625rem;
+  font-weight: 800;
+  line-height: 1.1;
+  transition:
+    transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 150ms ease;
+}
+.sd-btn:hover {
+  transform: translateY(-2px) rotate(-1.2deg);
+}
+.sd-btn:active {
+  transform: scale(0.95, 0.88);
+  transition-duration: 90ms;
+}
+.sd-btn-ink {
+  background: var(--color-ink);
+  color: #fff;
+}
+.sd-btn-ink:hover {
+  background: #561a5a;
+}
+.sd-btn-paper {
+  background: #fff;
+  color: var(--color-ink);
+}
+.sd-btn-citron {
+  background: #ffd23f;
+  color: var(--color-ink);
+}
+.sd-sticker {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.55rem 1.15rem;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+.sd-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  border-radius: 999px;
+  padding: 0 1.25rem;
+  background: var(--pill, var(--color-brand));
+  color: var(--color-ink);
+  font-weight: 800;
+  transition: transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.sd-pill:nth-child(4n) {
+  color: #fff;
+}
+.sd-pill:hover {
+  transform: rotate(-3deg) scale(1.04);
+}
+
+/* ── L'accueil : le titre qui gonfle et les bonbons qui tombent ─────────
+   Le seul mouvement que la page joue d'elle-même, une fois, au chargement :
+   le titre prend sa graisse comme une guimauve qui lève, et les bonbons
+   tombent dans leur galet en rebondissant. Chaque ligne du titre est
+   insécable, donc la graisse change sans jamais faire passer un mot à la
+   ligne suivante. */
+@keyframes sd-inflate {
+  from {
+    font-weight: 260;
+  }
+  to {
+    font-weight: 880;
+  }
+}
+@keyframes sd-drop {
+  from {
+    translate: 0 -70vh;
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  to {
+    translate: 0 0;
+    opacity: 1;
+  }
+}
+.sd-inflate {
+  animation: sd-inflate 1100ms cubic-bezier(0.22, 1.2, 0.36, 1) 120ms both;
+}
+.sd-pieces {
+  position: relative;
+  width: 100%;
+  max-width: 21rem;
+  aspect-ratio: 1;
+  margin-inline: auto;
+}
+@media (min-width: 640px) {
+  .sd-pieces {
+    max-width: 30rem;
+  }
+}
+@media (min-width: 1024px) {
+  .sd-pieces {
+    max-width: 38rem;
+  }
+}
+.sd-pieces-blob {
+  position: absolute;
+  inset: 9% 6% 7% 8%;
+  background: #ff3d7f;
+  border-radius: 58% 42% 46% 54% / 52% 44% 56% 48%;
+}
+.sd-piece {
+  position: absolute;
+  height: auto;
+  filter: drop-shadow(0 1.1rem 1rem rgb(58 15 61 / 0.25));
+  animation: sd-drop 1150ms cubic-bezier(0.3, 1.45, 0.55, 1) both;
+}
+.sd-piece-a {
+  left: 3%;
+  top: 6%;
+  width: 40%;
+  rotate: -9deg;
+  animation-delay: 60ms;
+}
+.sd-piece-b {
+  left: 50%;
+  top: 0%;
+  width: 46%;
+  rotate: 16deg;
+  animation-delay: 180ms;
+}
+.sd-piece-c {
+  left: 58%;
+  top: 54%;
+  width: 36%;
+  rotate: -14deg;
+  animation-delay: 300ms;
+}
+.sd-piece-d {
+  left: 10%;
+  top: 56%;
+  width: 30%;
+  rotate: 20deg;
+  animation-delay: 420ms;
+}
+.sd-piece-e {
+  left: 31%;
+  top: 33%;
+  width: 38%;
+  rotate: -6deg;
+  animation-delay: 540ms;
+}
+.sd-piece-f {
+  left: 79%;
+  top: 33%;
+  width: 19%;
+  rotate: 12deg;
+  animation-delay: 660ms;
+}
+
+/* ── Les galets : la grille des produits ─────────────────────────────────
+   Pas de grille au cordeau : une colonne sur deux descend d'un cran, comme
+   des bonbons versés sur une table. */
+.sd-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.75rem 1rem;
+  padding-bottom: 2rem;
+}
+.sd-grid > li:nth-child(even) {
+  translate: 0 2rem;
+}
+@media (min-width: 768px) {
+  .sd-grid-4 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 3.5rem 1.75rem;
+    padding-bottom: 3rem;
+  }
+  .sd-grid-4 > li:nth-child(even) {
+    translate: none;
+  }
+  .sd-grid-4 > li:nth-child(3n + 2) {
+    translate: 0 3rem;
+  }
+}
+@media (min-width: 1024px) {
+  .sd-grid-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4rem 2rem;
+  }
+  .sd-grid-4 > li:nth-child(3n + 2) {
+    translate: none;
+  }
+  .sd-grid-4 > li:nth-child(4n + 2),
+  .sd-grid-4 > li:nth-child(4n + 4) {
+    translate: 0 3rem;
+  }
+}
+.sd-card-photo {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--pebble, 50%);
+  background: var(--candy);
+  rotate: var(--tilt, 0deg);
+  transition:
+    border-radius 500ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    rotate 500ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    scale 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.sd-card a:hover .sd-card-photo {
+  border-radius: 47% 53% 50% 50% / 50% 47% 53% 50%;
+  rotate: 0deg;
+  scale: 1.03;
+}
+.sd-card-name {
+  font-family: var(--font-serif);
+  font-size: clamp(1.15rem, 1.55vw, 1.45rem);
+  font-weight: 750;
+  line-height: 1.08;
+  color: var(--color-ink);
+  text-wrap: balance;
+}
+.sd-card-price {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  background: var(--color-surface);
+  box-shadow: inset 0 0 0 2.5px var(--candy);
+  font-size: 0.9375rem;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+
+/* ── Rayons : des pastilles géantes ──────────────────────────────────────
+   Sur mobile, une pilule couchée, le bonbon à gauche ; dès 640 px, un rond. */
+.sd-rayon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 7.5rem;
+  border-radius: 999px;
+  padding: 0.75rem 1.75rem 0.75rem 0.75rem;
+  background: var(--rayon);
+  color: var(--color-ink);
+}
+.sd-rayon-piece {
+  width: 6.5rem;
+  flex-shrink: 0;
+  rotate: -8deg;
+  filter: drop-shadow(0 0.6rem 0.6rem rgb(58 15 61 / 0.22));
+  transition:
+    rotate 380ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    translate 380ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.sd-rayon:hover .sd-rayon-piece {
+  rotate: 8deg;
+  translate: 0 -0.5rem;
+}
+@media (min-width: 640px) {
+  .sd-rayon {
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.25rem;
+    aspect-ratio: 1;
+    padding: 1.5rem;
+    text-align: center;
+    border-radius: 50%;
+  }
+  .sd-rayon-piece {
+    width: 42%;
+    margin-top: -12%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* ── Formes organiques des photographies ─────────────────────────────── */
+.sd-drop {
+  border-radius: 50% 50% 46% 54% / 40% 42% 58% 60%;
+  rotate: -2deg;
+}
+.sd-avent-photo {
+  overflow: hidden;
+  border-radius: 44% 56% 52% 48% / 54% 46% 54% 46%;
+  background: var(--candy);
+  rotate: 2deg;
+}
+
+/* ── En-tête : la pilule flottante ───────────────────────────────────────
+   La barre collante est transparente et laisse passer les clics ; seule la
+   pilule les reçoit. */
+.sd-header {
+  pointer-events: none;
+}
+.sd-header-pill {
+  pointer-events: auto;
+  border-radius: 999px;
+  background: var(--color-surface);
+  box-shadow:
+    0 0 0 1.5px rgb(58 15 61 / 0.07),
+    0 0.75rem 2rem -1.25rem rgb(58 15 61 / 0.45);
+}
+.sd-header-pill nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  border-radius: 999px;
+  padding: 0 1rem;
+}
+.sd-header-pill nav a:hover {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+/* Pas de `display` ici : ces règles sont hors couche et l'emporteraient sur
+   les utilitaires `inline-flex xl:hidden` posés dans le gabarit. */
+.sd-icon-btn {
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  color: var(--color-ink);
+  transition: background-color 150ms ease;
+}
+.sd-icon-btn:hover {
+  background: var(--color-paper);
+}
+.sd-search {
+  min-height: 2.75rem;
+  border-radius: 999px;
+  padding: 0 1rem;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+.sd-search:focus-within {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 2px;
+}
+.sd-search input:focus-visible {
+  outline: none;
+}
+.sd-cart {
+  min-height: 2.75rem;
+  border-radius: 999px;
+  padding: 0 0.85rem;
+  background: var(--color-ink);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 800;
+  transition: transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@media (min-width: 640px) {
+  .sd-cart {
+    padding: 0 1.15rem;
+    font-size: 0.9375rem;
+  }
+}
+/* Sous 400 px, la pilule ne tient pas la marque, la loupe, « Panier » et le
+   menu : le mot cède la place à un sac. Il reste dans le DOM, en corps nul,
+   donc le lien garde son nom pour les lecteurs d'écran. */
+@media (max-width: 399.98px) {
+  .sd-cart {
+    gap: 0.15rem;
+    padding: 0 0.75rem;
+    font-size: 0;
+  }
+  .sd-cart::before {
+    content: '';
+    width: 1.25rem;
+    height: 1.25rem;
+    background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z'/%3E%3Cpath d='M9 10V7a3 3 0 0 1 6 0v3'/%3E%3C/svg%3E")
+      center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z'/%3E%3Cpath d='M9 10V7a3 3 0 0 1 6 0v3'/%3E%3C/svg%3E")
+      center / contain no-repeat;
+  }
+  .sd-cart [data-cart-count-label] {
+    font-size: 0.8125rem;
+  }
+  .sd-cart [data-cart-count-label]:not(:empty) {
+    margin-left: 0;
+  }
+}
+.sd-cart:hover {
+  transform: rotate(-2deg);
+}
+/* Le compteur du panier : « Panier (2) », pas « Panier(2) ». */
+[data-cart-count-label] {
+  min-width: 0;
+}
+[data-cart-count-label]:not(:empty) {
+  margin-left: 0.25em;
+}
+.sd-logo-mark {
+  transition: rotate 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+a:hover > .sd-logo-mark {
+  rotate: 200deg;
+}
+.sd-announce {
+  background: var(--color-ink);
+  color: #ffd23f;
+}
+
+/* Le menu des petits écrans : le panneau du <details> de <StoreNav>, rendu
+   `static`, s'ouvre sous toute la largeur de la pilule. */
+.sd-header [data-nav-disclosure] > summary {
+  width: 2.75rem;
+  height: 2.75rem;
+  justify-content: center;
+  border-radius: 999px;
+}
+.sd-header [data-nav-disclosure] > summary:hover {
+  background: var(--color-paper);
+}
+.sd-header [data-nav-disclosure] > summary svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+.sd-header [data-nav-disclosure] > div {
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin-top: 0.5rem;
+  min-width: 0;
+  gap: 0.25rem;
+  padding: 1rem;
+  border: 0;
+  border-radius: 1.75rem;
+  background: var(--color-surface);
+  box-shadow: 0 1rem 2.5rem -1.25rem rgb(58 15 61 / 0.5);
+}
+.sd-header [data-nav-disclosure] > div > a {
+  border-radius: 1rem;
+  padding: 0.7rem 1rem;
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 750;
+}
+.sd-header [data-nav-disclosure] > div > a:hover {
+  background: var(--color-paper);
+}
+
+/* ── Pied de page ────────────────────────────────────────────────────── */
+.sd-footer {
+  position: relative;
+  margin-top: 6rem;
+  background: var(--band);
+  color: #fff;
+}
+.page-shell:has(.sd-band-last) ~ .sd-footer {
+  margin-top: 0;
+}
+/* La marque, mesurée sur la largeur de la colonne (unité cqi) : « Sucrerie
+   Démo » en Gluten occupe environ 7,6 fois son corps, d'où 12,4 cqi pour tenir
+   bord à bord sans déborder. */
+.sd-footer-mark-box {
+  container-type: inline-size;
+}
+.sd-footer-mark {
+  font-family: var(--font-serif);
+  font-size: 12.4cqi;
+  font-weight: 880;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.15em;
+}
+
+/* ── Fiche produit ───────────────────────────────────────────────────── */
+.sd-crumb {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  border-radius: 999px;
+  padding: 0 0.95rem;
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+.sd-crumb:hover {
+  box-shadow: inset 0 0 0 2px var(--candy);
+}
+.sd-price {
+  display: inline-flex;
+  align-items: baseline;
+  border-radius: 999px;
+  padding: 0.3rem 1.2rem 0.45rem;
+  background: var(--candy);
+  color: var(--candy-ink);
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  rotate: -2.5deg;
+}
+.sd-promise {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  border-radius: 1.25rem;
+  padding: 0.85rem 1rem;
+  background: var(--color-surface);
+  line-height: 1.3;
+}
+.sd-promise svg {
+  flex-shrink: 0;
+  color: var(--candy-deep);
+}
+
+/* La galerie : un galet, sur la couleur du bonbon. */
+.sd-gallery [data-hero-track],
+.sd-gallery[data-product-hero] > img,
+.sd-gallery > img {
+  border-radius: 46% 54% 51% 49% / 52% 47% 53% 48%;
+  background: var(--candy);
+}
+.sd-gallery [data-hero-track] img,
+.sd-gallery img {
+  background: var(--candy);
+}
+.sd-gallery > div:last-child:not([data-hero-track]) {
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+.sd-gallery > div:last-child:not([data-hero-track]) a {
+  border-radius: 999px;
+  overflow: hidden;
+}
+.sd-gallery > div:last-child:not([data-hero-track]) img {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 999px;
+}
+
+/* Le choix du poids : des pastilles, pas une liste. Le bouton radio reste
+   dans le DOM, transparent et étendu à toute la pastille, pour garder le
+   clavier, le lecteur d'écran et la validation native. */
+.sd-purchase form[data-options-form] {
+  max-width: none;
+  margin-top: 2rem;
+}
+.sd-purchase fieldset > legend {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-ink);
+}
+.sd-purchase fieldset > div {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.sd-purchase fieldset label {
+  position: relative;
+  gap: 0.75rem;
+  min-height: 3.25rem;
+  border: 2.5px solid transparent;
+  border-radius: 999px;
+  padding: 0.5rem 1.25rem;
+  background: var(--color-surface);
+  font-size: 1.0625rem;
+  font-weight: 800;
+  color: var(--color-ink);
+}
+.sd-purchase fieldset label > span:first-child {
+  gap: 0;
+}
+.sd-purchase fieldset label input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+.sd-purchase fieldset label > span.tabular-nums {
+  color: var(--color-muted);
+  font-weight: 700;
+}
+.sd-purchase fieldset label:hover {
+  border-color: var(--candy);
+}
+.sd-purchase fieldset label:has(input:checked) {
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+  color: #fff;
+}
+.sd-purchase fieldset label:has(input:checked) > span.tabular-nums {
+  color: rgb(255 255 255 / 0.82);
+}
+.sd-purchase fieldset label:has(input:focus-visible) {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 3px;
+}
+.sd-purchase fieldset label:has(input:disabled) {
+  background: transparent;
+  border-color: rgb(58 15 61 / 0.15);
+  color: var(--color-faint);
+  font-size: 0.9375rem;
+}
+
+/* Les boutons d'achat : pleine largeur, en pilule, et ils s'écrasent au clic.
+   19 px en gras, c'est du « grand texte » au sens des WCAG : même le violet,
+   où le blanc ne fait que 4,4:1, reste conforme. */
+.sd-purchase form[data-options-form] > div:last-child,
+.sd-purchase > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.sd-purchase > div > form,
+.sd-purchase > div > span {
+  width: 100%;
+}
+.sd-purchase button[type='submit'],
+.sd-purchase form[data-options-form] > span,
+.sd-purchase > div > span {
+  width: 100%;
+  min-height: 3.75rem;
+  border: 0;
+  border-radius: 999px;
+  font-size: 1.1875rem;
+  font-weight: 850;
+  letter-spacing: 0;
+  text-transform: none;
+  transition:
+    transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 150ms ease;
+}
+.sd-purchase button[type='submit']:active {
+  transform: scale(0.96, 0.86);
+  transition-duration: 90ms;
+}
+/* L'ajout au panier vit toujours dans un formulaire POST ; l'achat express d'un
+   produit simple, dans un formulaire GET qu'il ne faut pas peindre en prune. */
+.sd-purchase form[method='POST' i] button[type='submit']:not([data-fullpage]):not([formaction]) {
+  background: var(--color-ink);
+  color: #fff;
+}
+.sd-purchase form[method='POST' i] button[type='submit']:not([data-fullpage]):not([formaction]):hover {
+  background: #561a5a;
+  color: #fff;
+}
+.sd-purchase button[data-fullpage],
+.sd-purchase form[method='GET'] button[type='submit'] {
+  background: var(--candy);
+  color: var(--candy-ink);
+}
+.sd-purchase button[data-fullpage]:hover,
+.sd-purchase form[method='GET'] button[type='submit']:hover {
+  background: var(--candy);
+  color: var(--candy-ink);
+  transform: rotate(-1deg);
+}
+.sd-purchase form[data-options-form] > span,
+.sd-purchase > div > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface);
+  color: var(--color-faint);
+}
+
+/* Les accordéons : des panneaux blancs, le signe dans une pastille. */
+.sd-details {
+  border-radius: 1.5rem;
+  padding: 1.1rem 1.35rem;
+  background: var(--color-surface);
+}
+.sd-details > summary {
+  display: flex;
+  list-style: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-radius: 0.75rem;
+  font-size: 1.0625rem;
+  font-weight: 850;
+}
+.sd-details > summary::-webkit-details-marker {
+  display: none;
+}
+.sd-details-mark {
+  position: relative;
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  background: var(--candy);
+  color: var(--candy-ink);
+}
+.sd-details-mark::before,
+.sd-details-mark::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.75rem;
+  height: 2.5px;
+  border-radius: 2px;
+  background: currentColor;
+  translate: -50% -50%;
+  transition: rotate 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.sd-details-mark::after {
+  rotate: 90deg;
+}
+.sd-details[open] .sd-details-mark::after {
+  rotate: 0deg;
+}
+.sd-product-copy {
+  --prose-leading: 1.65;
+  margin-top: 0.9rem;
+  font-size: 0.9375rem;
+  color: #4d2149;
+}
+.sd-product-copy > :first-child {
+  margin-top: 0;
+}
+.sd-product-copy ul {
+  padding-left: 1.1rem;
+}
+.sd-product-copy strong {
+  color: var(--color-ink);
+  font-weight: 850;
+}
+
+/* ── Pages de contenu ────────────────────────────────────────────────────
+   base.css est chargé après ce fichier : à spécificité égale, il gagnerait.
+   D'où le double sélecteur .markdown-content.sd-page. */
+.markdown-content {
+  color: #4d2149;
+}
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3 {
+  font-family: var(--font-serif);
+  color: var(--color-ink);
+  font-weight: 800;
+}
+.markdown-content a {
+  color: var(--color-accent);
+  text-decoration-thickness: 2px;
+}
+.markdown-content.sd-page {
+  font-size: 1.0625rem;
+}
+.markdown-content.sd-page > h1 {
+  font-weight: 880;
+  line-height: 0.95;
+  margin-bottom: 2.25rem;
+}
+.markdown-content.sd-page h2,
+.markdown-content.sd-page h3 {
+  line-height: 1.1;
+}
+.markdown-content.sd-page img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 2.25rem;
+  background: var(--color-surface);
+}
+.markdown-content.sd-page p:has(> img) {
+  margin-block: 2.25rem;
+}
+.markdown-content.sd-page p > img:only-child {
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+.markdown-content.sd-page p:has(> img + img) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+.markdown-content.sd-page p:has(> img + img) > img {
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+.markdown-content.sd-page p:has(> img + img) > img:first-child {
+  border-radius: 50% 50% 46% 54% / 40% 42% 58% 60%;
+}
+.markdown-content.sd-page p:has(> img + img) > img:last-child {
+  border-radius: 44% 56% 52% 48% / 54% 46% 54% 46%;
+  translate: 0 1.5rem;
+}
+.markdown-content.sd-page p:has(> img) + p > em:only-child {
+  display: block;
+  margin-top: -1rem;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+.markdown-content.sd-page blockquote {
+  border: 0;
+  border-radius: 2rem;
+  padding: 1.5rem 1.75rem;
+  background: #ffd23f;
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1.25;
+  color: var(--color-ink);
+  rotate: -1deg;
+}
+.markdown-content.sd-page blockquote p {
+  margin: 0;
+}
+.markdown-content.sd-page table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border-radius: 1.25rem;
+  background: var(--color-surface);
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+}
+.markdown-content.sd-page th {
+  text-align: left;
+  font-weight: 850;
+  background: #ffd23f;
+  color: var(--color-ink);
+}
+.markdown-content.sd-page th,
+.markdown-content.sd-page td {
+  border: 0;
+  border-bottom: 1.5px solid var(--color-line);
+  padding: 0.7rem 1rem;
+}
+.markdown-content.sd-page tr:last-child td {
+  border-bottom: 0;
+}
+.markdown-content.sd-page hr {
+  border: 0;
+  height: 1.5rem;
+  background: var(--color-brand);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24'%3E%3Cpath d='M0 12C15 12 15 4 30 4s15 16 30 16 15-16 30-16 15 8 30 8' fill='none' stroke='%23000' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E")
+    repeat-x center / 5rem 100%;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24'%3E%3Cpath d='M0 12C15 12 15 4 30 4s15 16 30 16 15-16 30-16 15 8 30 8' fill='none' stroke='%23000' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E")
+    repeat-x center / 5rem 100%;
+}
+
+/* ── Pages rendues par le cœur (catégorie, recherche, panier, commande) ──
+   Leur gabarit n'appartient pas au thème ; on ne fait qu'aligner leur ton
+   sur la vitrine : pas de petites capitales espacées, des pilules, des
+   panneaux arrondis, et la grille de galets. */
+.page-shell .uppercase,
+[data-cart-drawer] .uppercase {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 800;
+}
+.page-shell > h1.font-serif,
+.page-shell > div > h1.font-serif {
+  font-size: clamp(2.75rem, 7vw, 5.5rem);
+  font-weight: 880;
+  line-height: 0.95;
+  margin-bottom: 1.75rem;
+}
+.page-shell ul.grid.lg\:grid-cols-3 {
+  gap: 2.75rem 1rem;
+  padding-bottom: 2rem;
+}
+.page-shell ul.grid.lg\:grid-cols-3 > li:nth-child(even) {
+  translate: 0 2rem;
+}
+@media (min-width: 1024px) {
+  .page-shell ul.grid.lg\:grid-cols-3 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4rem 2rem;
+    padding-bottom: 3rem;
+  }
+  .page-shell ul.grid.lg\:grid-cols-3 > li:nth-child(even) {
+    translate: none;
+  }
+  .page-shell ul.grid.lg\:grid-cols-3 > li:nth-child(4n + 2),
+  .page-shell ul.grid.lg\:grid-cols-3 > li:nth-child(4n + 4) {
+    translate: 0 3rem;
+  }
+}
+/* Fil d'Ariane et sous-rayons d'une catégorie : en pilules. */
+.page-shell > nav:first-child {
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+/* Des pilules côte à côte n'ont pas besoin de barres obliques entre elles. */
+.page-shell > nav:first-child span[aria-hidden='true'] {
+  display: none;
+}
+.page-shell > nav:first-child a {
+  display: inline-flex;
+  min-height: 2.25rem;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0 0.95rem;
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+.page-shell > h1.font-serif + div.flex-wrap {
+  gap: 0.5rem;
+  margin-bottom: 2.5rem;
+}
+.page-shell > h1.font-serif + div.flex-wrap > a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  border: 0;
+  border-radius: 999px;
+  padding: 0 1.25rem;
+  background: #ffd23f;
+  color: var(--color-ink);
+  font-size: 0.9375rem;
+}
+/* Boutons et champs du cœur : en pilules, avec l'encre prune. */
+.page-shell :is(button, a).bg-brand,
+[data-cart-drawer] :is(button, a).bg-brand {
+  border-radius: 999px;
+  font-weight: 850;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.page-shell :is(input:not([type='checkbox']):not([type='radio']), select, textarea),
+[data-cart-drawer] :is(input:not([type='checkbox']):not([type='radio']), select) {
+  border-radius: 1rem;
+}
+/* :where() : la règle reste plus faible que les formes propres au thème (le
+   galet de la galerie porte lui aussi rounded-lg). */
+:where(.page-shell, [data-cart-drawer]) .rounded-lg {
+  border-radius: 1.75rem;
+}
+[data-cart-drawer] > div:last-child {
+  border-radius: 2rem 0 0 2rem;
+}
+[data-cart-drawer] h2.font-serif {
+  font-weight: 850;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sd-inflate,
+  .sd-piece {
+    animation: none;
+  }
+  .sd-btn,
+  .sd-pill,
+  .sd-cart,
+  .sd-card-photo,
+  .sd-rayon-piece,
+  .sd-logo-mark,
+  .sd-details-mark::before,
+  .sd-details-mark::after,
+  .sd-purchase button[type='submit'] {
+    transition: none;
+  }
 }
